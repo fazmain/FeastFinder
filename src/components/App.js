@@ -5,11 +5,9 @@ import RestaurantSection from "./RestaurantSection";
 import FilterForm from "./FilterForm";
 import NavBar from "./NavBar";
 import HeadingText from "./HeadingText";
-import { Box} from "@chakra-ui/react"; 
-
+import { Box } from "@chakra-ui/react";
 
 const App = () => {
-  // eslint-disable-next-line
   const [restaurants, setRestaurants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState({
@@ -38,7 +36,7 @@ const App = () => {
       .then((data) => {
         // For testing purpose, logging data.
         // console.log("DATA: ", data);
-        
+
         setFilter(data);
         setIsLoading(false);
       })
@@ -131,10 +129,10 @@ const App = () => {
       <div className="app">
         <NavBar />
         <HeadingText />
-        <FilterForm onSubmit={handleFormSubmit} isLoading={isLoading}/>
+        <FilterForm onSubmit={handleFormSubmit} isLoading={isLoading} />
         <Box>
           {restaurants.map((restaurant, index) => (
-            <RestaurantSection key={index} {...restaurant} />
+            <RestaurantSection key={index} {...restaurant} filter={filter} />
           ))}
         </Box>
       </div>
