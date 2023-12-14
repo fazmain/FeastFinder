@@ -11,21 +11,21 @@ const App = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState({
-    location: "",
+    location: "Uttara",
     tags: [],
     nOfPeople: 0,
-    famFriendly: false,
-    coupFriendly: false,
-    partyFriendly: false,
+    famFriendly: null,
+    coupFriendly: null,
+    partyFriendly: null,
     occasion: null,
     meal: null,
     budget: 0,
-    mainIngredient: "",
+    mainIngredient: "/",
   });
 
   const handleFormSubmit = (query) => {
     setIsLoading(true);
-    fetch("http://localhost:3000/generate-filter", {
+    fetch("https://feastfinder-server-c35562ccc017.herokuapp.com/generate-filter", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,7 +35,7 @@ const App = () => {
       .then((response) => response.json())
       .then((data) => {
         // For testing purpose, logging data.
-        // console.log("DATA: ", data);
+        console.log("DATA: ", data);
 
         setFilter(data);
         setIsLoading(false);
@@ -69,7 +69,11 @@ const App = () => {
           return acc;
         }
 
-        if (filter.location && !location.includes(filter.location)) {
+        if (
+          filter.location &&
+          location &&
+          !location.includes(filter.location)
+        ) {
           return acc;
         }
 
@@ -90,7 +94,9 @@ const App = () => {
             const { tags, price, mainIngredient } = item;
 
             if (
+              Array.isArray(filter.tags) &&
               filter.tags.length &&
+              Array.isArray(tags) &&
               !filter.tags.some((tag) => tags.includes(tag))
             ) {
               return false;
@@ -141,3 +147,5 @@ const App = () => {
 };
 
 export default App;
+
+
