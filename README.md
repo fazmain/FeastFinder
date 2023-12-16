@@ -1,6 +1,6 @@
-# FeastFinder App
+# FeastFinder: Revolutionizing the restaurant search experience
 
-This app provides personalized restaurant recommendations to users based on various filters such as location, number of people, meal preference, budget, main ingredients, and tags.
+FeastFinder is a restaurant search platform that recommends restaurants and menu items based on your natural language queries. It is like “Google for restaurants”.
 
 ## Features
 
