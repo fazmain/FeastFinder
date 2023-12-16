@@ -5,7 +5,7 @@ import RestaurantSection from "./RestaurantSection";
 import FilterForm from "./FilterForm";
 import NavBar from "./NavBar";
 import HeadingText from "./HeadingText";
-import { Box } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 
 const App = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -46,105 +46,109 @@ const App = () => {
       });
   };
 
-  useEffect(() => {
-    const db = getDatabase(app);
-    const restaurantsRef = ref(db, "restaurants");
+    useEffect(() => {
+      const db = getDatabase(app);
+      const restaurantsRef = ref(db, "restaurants");
 
-    onValue(restaurantsRef, (snapshot) => {
-      const data = snapshot.val();
-      const restaurantsData = data ? Object.values(data) : [];
+      onValue(restaurantsRef, (snapshot) => {
+        const data = snapshot.val();
+        const restaurantsData = data ? Object.values(data) : [];
 
-      const filteredRestaurants = restaurantsData.reduce((acc, restaurant) => {
-        const {
-          location,
-          meal,
-          seating,
-          famFriendly,
-          coupFriendly,
-          partyFriendly,
-          menu,
-        } = restaurant;
+        const filteredRestaurants = restaurantsData.reduce((acc, restaurant) => {
+          const {
+            location,
+            meal,
+            seating,
+            famFriendly,
+            coupFriendly,
+            partyFriendly,
+            menu,
+          } = restaurant;
 
-        if (filter.nOfPeople && seating < filter.nOfPeople) {
-          return acc;
-        }
-
-        if (
-          filter.location &&
-          location &&
-          !location.includes(filter.location)
-        ) {
-          return acc;
-        }
-
-        if (filter.meal !== null && meal !== filter.meal) {
-          return acc;
-        }
-
-        if (
-          (filter.famFriendly && !famFriendly) ||
-          (filter.coupFriendly && !coupFriendly) ||
-          (filter.partyFriendly && !partyFriendly)
-        ) {
-          return acc;
-        }
-
-        if (filter.tags.length || filter.budget || filter.mainIngredient) {
-          const filteredMenu = menu.filter((item) => {
-            const { tags, price, mainIngredient } = item;
-
-            if (
-              Array.isArray(filter.tags) &&
-              filter.tags.length &&
-              Array.isArray(tags) &&
-              !filter.tags.some((tag) => tags.includes(tag))
-            ) {
-              return false;
-            }
-
-            if (
-              filter.mainIngredient &&
-              mainIngredient !== filter.mainIngredient
-            ) {
-              return false;
-            }
-
-            if (filter.budget && price > filter.budget) {
-              return false;
-            }
-
-            return true;
-          });
-
-          if (filteredMenu.length === 0) {
+          if (filter.nOfPeople && seating < filter.nOfPeople) {
             return acc;
           }
 
-          restaurant.menu = filteredMenu;
-        }
+          if (
+            filter.location &&
+            location &&
+            !location.includes(filter.location)
+          ) {
+            return acc;
+          }
 
-        return acc.concat(restaurant);
-      }, []);
+          if (filter.meal !== null && meal !== filter.meal) {
+            return acc;
+          }
 
-      setRestaurants(filteredRestaurants);
-    });
-  }, [filter]);
+          if (
+            (filter.famFriendly && !famFriendly) ||
+            (filter.coupFriendly && !coupFriendly) ||
+            (filter.partyFriendly && !partyFriendly)
+          ) {
+            return acc;
+          }
 
-  return (
-    <Box>
-      <div className="app">
-        <NavBar />
-        <HeadingText />
-        <FilterForm onSubmit={handleFormSubmit} isLoading={isLoading} />
-        <Box>
-          {restaurants.map((restaurant, index) => (
-            <RestaurantSection key={index} {...restaurant} filter={filter} />
-          ))}
-        </Box>
-      </div>
-    </Box>
-  );
-};
+          if (filter.tags.length || filter.budget || filter.mainIngredient) {
+            const filteredMenu = menu.filter((item) => {
+              const { tags, price, mainIngredient } = item;
+
+              if (
+                Array.isArray(filter.tags) &&
+                filter.tags.length &&
+                Array.isArray(tags) &&
+                !filter.tags.some((tag) => tags.includes(tag))
+              ) {
+                return false;
+              }
+
+              if (
+                filter.mainIngredient &&
+                mainIngredient !== filter.mainIngredient
+              ) {
+                return false;
+              }
+
+              if (filter.budget && price > filter.budget) {
+                return false;
+              }
+
+              return true;
+            });
+
+            if (filteredMenu.length === 0) {
+              return acc;
+            }
+
+            restaurant.menu = filteredMenu;
+          }
+
+          return acc.concat(restaurant);
+        }, []);
+
+        setRestaurants(filteredRestaurants);
+      });
+    }, [filter]);
+
+    return (
+      <Box>
+        <div className="app">
+          <NavBar />
+          <HeadingText />
+          <FilterForm onSubmit={handleFormSubmit} isLoading={isLoading} />
+          <Box>
+            {restaurants.length === 0 ? (
+              <Heading>No results found for the query.</Heading>
+            ) : (
+              restaurants.map((restaurant, index) => (
+                <RestaurantSection key={index} {...restaurant} filter={filter} />
+              ))
+            )}
+          </Box>
+        </div>
+      </Box>
+    );
+  };
 
 export default App;
 
